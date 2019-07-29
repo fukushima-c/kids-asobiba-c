@@ -14,7 +14,7 @@ var filesToCache = [
 ];
 
 firebase.initializeApp({
-	'messagingSenderId': '425400882324'
+	'messagingSenderId': '464533703065'
 });
 
 var messaging = firebase.messaging();
