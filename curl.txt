@@ -1,0 +1,13 @@
+curl "https://fcm.googleapis.com/fcm/send" \
+     -X POST \
+     -H "Content-Type: application/json" \
+     -H "Authorization: key=AAAAYwveVJQ:APA91bFQiJ4rcGz8Z3rsLA4Qf4KjA0h7ojVDGup8cK9ZcErckHS7PQryfqe7HbJqf6DpFryHaDZ20BT2DtucDy8V3mPlD_am-6TbEme2uez7gYfMw5NyTPT8qt5vL4ZzIFLaavepxdcn" \
+     -d '{
+         "notification": {
+            "title": "通知のテストです",
+            "body": "PCへプッシュ通知です",
+            "click_action": "<プッシュ通知をクリックしたときに移動先にするURL>",
+          },
+          "to": "cLujhyW1b-Y:APA91bGWeo1IZVcD78nnI4gdjdUnYOS-cDOP8U-zmfVlDTsmkAkctokuCxZobpIMO4rQy_rXoOWUS7GWhx-AToTJ3tD077M0qZRWcuQmrcmdrYfZKPz087_Cyzm68zLQ_ApuGoKnaVFe"
+        }'
+		

@@ -1,0 +1,13 @@
+curl "https://fcm.googleapis.com/fcm/send" \
+     -X POST \
+     -H "Content-Type: application/json" \
+     -H "Authorization: key=AAAAYwveVJQ:APA91bFQiJ4rcGz8Z3rsLA4Qf4KjA0h7ojVDGup8cK9ZcErckHS7PQryfqe7HbJqf6DpFryHaDZ20BT2DtucDy8V3mPlD_am-6TbEme2uez7gYfMw5NyTPT8qt5vL4ZzIFLaavepxdcn" \
+     -d '{
+         "notification": {
+            "title": "通知のテストです",
+            "body": "My Galaxyへプッシュ通知です",
+            "click_action": "<プッシュ通知をクリックしたときに移動先にするURL>",
+          },
+          "to": "dUUs-qH6LDE:APA91bGs5zn9pXuWvTtfX9d-B3jWtssYlZDKmuQHm-nZ_H_Y9_YvC7BQVUR_Eeu6bjmLfGrHznzF2SGD3K_ADM6kRii8uonu33ameGeCyM3YwFg0u7Fe4Rupkr0DPn_U_K4WomkGdnX-"
+        }'
+		

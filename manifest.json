@@ -1,0 +1,18 @@
+{
+  "name": "Kids-asobiba",
+  "short_name": "屋内遊び場MAP", 
+  "icons": [{
+    "src": "icons/icon-64x64.png",
+      "sizes": "64x64",
+      "type": "image/png"
+    }, {
+      "src": "icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+  }],
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#BD913F",
+  "theme_color": "#916028",
+  "gcm_sender_id": "103953800507"
+}

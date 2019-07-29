@@ -1,0 +1,159 @@
+<!DOCTYPE HTML>
+<html lang="ja">
+<head>
+	<meta charset="utf-8" />
+	<meta http-equiv="Pragma" content="no-cache">
+	<meta http-equiv="Cache-Control" content="no-cache">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" type="text/css" href="styles/app.css">
+<!--- apple-touch-icon はiOS / Androidでホーム画面に追加したときのアイコン --->
+	<link rel="apple-touch-icon" sizes="180x180"  href="apple-touch-icon.png">
+	<link rel="manifest" href="./manifest.json">
+	<script src="scripts/jquery-3.4.1.min.js"></script>
+	<script src="scripts/app.js"></script>
+	<title>ふくしま屋内遊び場マップ</title>
+</head>
+
+<body>
+	<header class="app-header">
+		<h1 class="header-title">ふくしま屋内遊び場マップ</h1>
+	</header>
+
+	<div class="container">
+		<div class="fukidashi">タップしてください！</div>
+		<div class="fukidashi_fuchi"><img src="img/fukidashi_fuchi.png" alt=""></div>
+		<img src="img/kid60.png" alt="タップで表示" onclick="msg();" class="kid">
+		<!--許可・トークン表示ボタン-->
+		<br><input type="button" onclick="requestPermission() ;" value="通知を許可">
+		<div id="map" class="maparea"></div>	
+	</div>
+
+<!------ end of app-main ----->
+
+	<script	type="application/javascript">
+// Serviceworkerの読み込み
+	if('serviceWorker' in navigator){
+	 navigator.serviceWorker
+		.register('firebase-messaging-sw.js')
+		.then(function(){
+			console.log('Service Worker Registered');
+	 });
+	}
+	</script>
+
+<!-- The core Firebase JS SDK is always required and must be listed first --->
+<script src="https://www.gstatic.com/firebasejs/6.3.1/firebase-app.js"></script> 
+<script src="https://www.gstatic.com/firebasejs/6.3.1/firebase-messaging.js"></script>
+		
+<!-- TODO: Add SDKs for Firebase products that you want to use
+		 https://firebase.google.com/docs/web/setup#config-web-app -->
+
+<script>
+	// Your web app's Firebase configuration
+	var firebaseConfig = {
+		apiKey: "AIzaSyBa23sX7FnnXdy2B6GhcQYbxFt337JzQw8",
+		authDomain: "kids-asobiba.firebaseapp.com",
+		databaseURL: "https://kids-asobiba.firebaseio.com",
+		projectId: "kids-asobiba",
+		storageBucket: "",
+		messagingSenderId: "425400882324",
+		appId: "1:425400882324:web:118a2fff9c4280ac"
+	};
+	// Initialize Firebase
+	firebase.initializeApp(firebaseConfig);
+
+	const messaging = firebase.messaging();
+	
+	function requestPermission() {
+		//プッシュ通知の許可をする処理
+		console.log('Requesting permission...');
+		// [START request_permission]
+		messaging.requestPermission().then(function() {
+			console.log('Notification permission granted.');
+			// TODO(developer): Retrieve an Instance ID token for use with FCM.
+			// [START_EXCLUDE]
+			// In many cases once an app has been granted notification permission, it
+			// should update its UI reflecting this.
+			viewToken();
+			// [END_EXCLUDE]
+		}).catch(function(err) {
+			console.log('Unable to get permission to notify.', err);
+		});
+		// [END request_permission]
+	}
+	
+	function viewToken(){
+		messaging.getToken().then(function(currentToken) {
+			if (currentToken) {
+			//フキダシにトークンを表示。functionはapp.jsに定義。
+				console.log(currentToken); 
+				msg02('このデバイスのトークン : '+ currentToken); 
+			} else {
+				// Show permission request.
+				console.log('No Instance ID token available. Request permission to generate one.');
+				// Show permission UI.
+				updateUIForPushPermissionRequired();
+				setTokenSentToServer(false);
+			}
+		}).catch(function(err) {
+			console.log('An error occurred while retrieving token. ', err);
+			showToken('Error retrieving Instance ID token. ', err);
+			setTokenSentToServer(false);
+		});
+	}
+
+</script>
+
+<script>
+	// Google Maps API で地図表示
+	function initMap() {
+		var locations = [
+				 ['福島市さんどパーク', 37.762173, 140.469164],
+				 ['こむこむ', 37.752395, 140.460549],
+				 ['おもちゃ広場', 37.763271, 140.463318],
+				 ['あづま総合体育館　軽運動室', 37.725147, 140.364950],
+				 ['さゆりこども園', 37.758758, 140.416794],
+				 ['ほくしん保育園　わくわくひろばにじ', 37.789380, 140.472426],
+				 ['十六沼公園', 37.815635, 140.415997],
+				 ['げんきキッズパークにほんまつ', 37.595388, 140.464573],
+				 ['ちびっこ広場', 37.814428, 140.620812],
+				 ['ファミリーパークだて',37.824973, 140.495895 ],
+				 ['レオパークやながわ', 37.854498, 140.603290],
+				 ['スマイルパークほばら', 37.813343, 140.545328],
+				 ['伊達市ちびっこ広場', 37.814486, 140.620799],
+				 ['桑折町屋内プール内　イコーゼ！', 37.847870, 140.527451],
+				 ['おてひめわくわくらんど', 37.660326, 140.605865],
+				 ['こじゅうろうキッズランド', 38.025120, 140.626327],
+				 ['白石市ふれあいプラザ　やんちゃっこ', 38.001701, 140.622523]
+		];
+		var map = new google.maps.Map(document.getElementById('map'), {
+				 zoom: 11,
+				 center: new google.maps.LatLng(37.762173, 140.469164),
+				 mapTypeId: google.maps.MapTypeId.ROADMAP	
+		});
+
+		var infowindow = new google.maps.InfoWindow;
+		var marker, i;
+
+		for (i = 0; i < locations.length; i++) {	
+				marker = new google.maps.Marker({
+						 position: new google.maps.LatLng(locations[i][1], locations[i][2]),
+						 map: map
+				});
+
+				google.maps.event.addListener(marker, 'click', (function(marker, i) {
+						 return function() {
+								 infowindow.setContent(locations[i][0]);
+								 infowindow.open(map, marker);
+						 }
+				})(marker, i));
+		}
+	}
+</script>
+
+<script async defer
+				src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDXUa7Hj6EwsF4qMbNIMq1p2SJ7EB47hFs&callback=initMap">
+</script>
+
+</body>
+</html>
